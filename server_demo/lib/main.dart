@@ -1,20 +1,20 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:server_demo/emails.dart';
-import 'package:server_demo/names.dart';
 import 'package:server_demo/numbers.dart';
-import 'package:server_demo/users.dart';
-List<dynamic> users=[];
+import 'package:server_demo/selftask.dart';
+import 'asstask.dart';
+
+List<dynamic> tasks;
+
 Future<List<dynamic>> getData()async
 {
-  users=[];
-    var response=await http.get('http://10.0.2.2:8000/users');
+    tasks=[];
+    var response=await http.get('http://10.0.2.2:8000/users/1/selftasks');
     if(response.statusCode==200)
     {
-      users=(json.decode(response.body));
-      // print(users);
-      return users;
+      tasks=(json.decode(response.body));
+      return tasks;
     }
     else{
       print('cant fetch data');
@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // getData();
+    getData();
   }
 
   @override
@@ -51,17 +51,22 @@ class _HomePageState extends State<HomePage> {
         Container(margin:EdgeInsets.all(10.0),child: FloatingActionButton(onPressed: (){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>Numbers()));
         },child: Icon(Icons.phone),)),
-        IconButton(
+        Container(
           color: Colors.blue,
-          onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>Names()));
-        },icon: Icon(Icons.account_box),),
-        Container(margin:EdgeInsets.all(10.0),child: IconButton(onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>Emails()));
-        },icon: Icon(Icons.mail),))
+          child: IconButton(
+            onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>addself()));
+          },icon: Icon(Icons.add),),
+        ),
+        Container(
+          color: Colors.blue,
+          margin:EdgeInsets.all(10.0),child: IconButton(onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>Asstask()));
+        },icon: Icon(Icons.send),))
       ],),
       appBar: AppBar(
-        title: Text('demo api'),
+        leading: Container(),
+        title: Text('Self Tasks'),
       ),
           body: FutureBuilder(
             future: getData(),
@@ -73,12 +78,11 @@ class _HomePageState extends State<HomePage> {
               else
               {
                 return ListView.builder(
-                  itemCount: users.length,
+                  itemCount: tasks.length,
                   itemBuilder:(_,index){
-                    return Column(
-                      children: <Widget>[
-                        Text('${snapshot.data.elementAt(index)['id']}',style: TextStyle(fontSize: 30.0),),
-                      ],
+                    return ListTile( 
+                      title: Text('${snapshot.data.elementAt(index)['title']}',style: TextStyle(fontSize: 20.0),),
+                      subtitle: Text('${snapshot.data.elementAt(index)['desc']} Dealine: ${snapshot.data.elementAt(index)['date']}',style: TextStyle(fontSize: 15.0),),
                     );
                   } );
               }
