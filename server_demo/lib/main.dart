@@ -1,25 +1,26 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:server_demo/bloc/TaskListState.dart';
+import 'package:server_demo/bloc/listingBloc.dart';
 import 'package:server_demo/numbers.dart';
+import 'package:server_demo/repository.dart';
 import 'package:server_demo/selftask.dart';
-import 'asstask.dart';
 
-List<dynamic> tasks;
+// List<dynamic> tasks; 
 
-Future<List<dynamic>> getData()async
-{
-    tasks=[];
-    var response=await http.get('http://10.0.2.2:8000/users/1/selftasks');
-    if(response.statusCode==200)
-    {
-      tasks=(json.decode(response.body));
-      return tasks;
-    }
-    else{
-      print('cant fetch data');
-    }
-}
+// Future<List<dynamic>> getData()async
+// {
+//     tasks=[];
+//     var response=await http.get('http://10.0.2.2:8000/users/1/selftasks');
+//     if(response.statusCode==200)
+//     {
+//       tasks=(json.decode(response.body));
+//       return tasks;
+//     }
+//     else{
+//       print('cant fetch data');
+//     }
+// }
 
 void main(){
   runApp(MaterialApp(
@@ -27,19 +28,7 @@ void main(){
   ));
 }
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getData();
-  }
+class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
@@ -61,33 +50,76 @@ class _HomePageState extends State<HomePage> {
         Container(
           color: Colors.blue,
           margin:EdgeInsets.all(10.0),child: IconButton(onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>Asstask()));
+          // bl.dispatch();
         },icon: Icon(Icons.send),))
       ],),
       appBar: AppBar(
         leading: Container(),
         title: Text('Self Tasks'),
       ),
-          body: FutureBuilder(
-            future: getData(),
-            builder: (context,snapshot){
-              if(snapshot.connectionState==ConnectionState.waiting)
-              {
-                return Center(child: CircularProgressIndicator(),);
-              }
-              else
-              {
-                return ListView.builder(
-                  itemCount: tasks.length,
-                  itemBuilder:(_,index){
-                    return ListTile( 
-                      title: Text('${snapshot.data.elementAt(index)['title']}',style: TextStyle(fontSize: 20.0),),
-                      subtitle: Text('${snapshot.data.elementAt(index)['desc']} Dealine: ${snapshot.data.elementAt(index)['date']}',style: TextStyle(fontSize: 15.0),),
-                    );
-                  } );
-              }
-            },
+          body: BlocProvider(            
+            create: (context) => TaskListingBloc(TaskRepo()),
+            child: displayPage(),
           ),
     );
   }
 }
+
+class displayPage extends StatelessWidget {
+  
+  @override
+  Widget build(BuildContext context) {
+    final bl=BlocProvider.of<TaskListingBloc>(context);
+    return BlocBuilder<TaskListingBloc,ListingState>(
+      // bloc:BlocProvider.of<TaskListingBloc>(context),
+      builder: (context,state){
+        if(state is ListEmptyState){
+          return Center(child: Text('empty set'),);
+        }
+        else if(state is ListErrorState){
+          return Center(child: Text('error set'),);
+        }
+        else if(state is ListFetchingState){
+          return Center(child: CircularProgressIndicator(),);
+        }
+        else{
+          final stateasdatafetched= state as ListFectchedState;
+          final tasks=stateasdatafetched.tasks;
+          return buildList(tasks);
+        }
+      }
+    );
+  }
+}
+
+Widget buildList(List<dynamic> tasks){
+  return ListView.builder(
+            itemCount: tasks.length,
+            itemBuilder:(_,index){
+              return ListTile( 
+                title: Text('${tasks.elementAt(index)['title']}',style: TextStyle(fontSize: 20.0),),
+                subtitle: Text('${tasks.elementAt(index)['desc']} Dealine: ${tasks.elementAt(index)['date']}',style: TextStyle(fontSize: 15.0),),
+            );
+        } );
+}
+
+// FutureBuilder(
+//             future: getData(),
+//             builder: (context,snapshot){
+//               if(snapshot.connectionState==ConnectionState.waiting)
+//               {
+//                 return Center(child: CircularProgressIndicator(),);
+//               }
+//               else
+//               {
+//                 return ListView.builder(
+//                   itemCount: tasks.length,
+//                   itemBuilder:(_,index){
+//                     return ListTile( 
+//                       title: Text('${snapshot.data.elementAt(index)['title']}',style: TextStyle(fontSize: 20.0),),
+//                       subtitle: Text('${snapshot.data.elementAt(index)['desc']} Dealine: ${snapshot.data.elementAt(index)['date']}',style: TextStyle(fontSize: 15.0),),
+//                     );
+//                   } );
+//               }
+//             },
+//           )
