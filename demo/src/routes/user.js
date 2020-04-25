@@ -7,6 +7,23 @@ router.get('/', (req, res) => {
     res.status(200).json('server on port 8000 and database is connected');
 });
 
+//authenticate user
+router.get('/users/auth/:username/:pswd', (req, res) => {
+    var uname = req.params.username;
+    var psd = req.params.pswd;
+    mysqlconnection.query('select id from users where username=? and password=?;', [uname, psd], (error, rows) => {
+        if (rows.length == 0) {
+            res.send('no user found');
+        } else {
+            if (!error) {
+                res.json(rows[0].id);
+            } else {
+                console.log(error);
+            }
+        }
+    })
+});
+
 //get all users
 router.get('/:users', (req, res) => {
     mysqlconnection.query('select * from users;', (error, rows, fields) => {
@@ -88,7 +105,7 @@ router.get('/:users/:id', (req, res) => {
 });
 
 //input new user
-router.post('/:users', (req, res) => {
+router.post('/:users/input', (req, res) => {
     const { id, username, lastname, mail, number } = req.body;
     console.log(req.body);
     mysqlconnection.query('insert into users values (?,?,?,?,?)', [id, username, lastname, mail, number], (error, rows, fields) => {
@@ -101,7 +118,7 @@ router.post('/:users', (req, res) => {
 });
 
 //update user
-router.put('/:users/:id', (req, res) => {
+router.put('/:users/update/:id', (req, res) => {
     const { id, username, lastname, mail, number } = req.body;
     console.log(req.body);
     mysqlconnection.query('update set username=?,lastname=?,email=?,number=? where id=?', [username, lastname, mail, number, id], (error, rows, fields) => {
