@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:state_login/userrepo.dart';
 
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -15,7 +16,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final user=Provider.of<UserRepo>(context,listen: false);
+    final user=Provider.of<UserRepo>(context);
     return Scaffold(
       key:_key,
       appBar: AppBar(title: Text('Login'),),
@@ -53,23 +54,34 @@ class _LoginPageState extends State<LoginPage> {
                         elevation: 5.0,
                         borderRadius: BorderRadius.circular(30.0),
                         color: Colors.red,
-                        child: MaterialButton(
+                        child: MaterialButton(  //login button
                           onPressed: () async {
                             if (formKey.currentState.validate()) {
-                              if ((!await user.signIn(
-                                  _email.text, _password.text)) == true)
+                              //calling the function to login
+                              if ((await user.signIn(
+                                  _email.text, _password.text)) == false)
                                 {_key.currentState.showSnackBar(SnackBar(
                                   content: Text("Something is wrong"),
                                 ));
                                 }
                             }
+                            print(user.st);
                             
                           },
                           child: Text(
                             "Sign In",
                         ),
                       ),
-                    ))
+                    )),
+                    SizedBox(height: 100.0,),
+                    FlatButton(  //signup button
+                        onPressed: (){
+                          print(user.st);
+                          user.st=Status.signupauthenticating;
+                          print(user.st);
+                        },
+                        child: Text('Sign Up'),
+                      ),
         ],),
       )
     );

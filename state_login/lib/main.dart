@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:state_login/login.dart';
+import 'package:state_login/signup.dart';
 import 'package:state_login/userrepo.dart';
 
 void main()=>runApp(MyApp());
@@ -21,12 +22,18 @@ class HomePage extends StatelessWidget {
       create: (_) => UserRepo(),
       child: Consumer(
         builder: (context,UserRepo user,_){
+          //switch case to display UI Pages according to states
           switch(user.status){
             case Status.Unintialized:
               return Splash();
             case Status.Unauthenticated:
             case Status.Authenticating:
               return LoginPage();
+            case Status.signupauthenticating:
+            case Status.notsignedup:
+              return SignUpPage();
+            case Status.signedup:
+              return Task(id: user.id,);
             case Status.Authenticated:
               return Task(id: user.id);
           }
