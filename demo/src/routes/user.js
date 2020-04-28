@@ -8,10 +8,10 @@ router.get('/', (req, res) => {
 });
 
 //authenticate user
-router.get('/users/auth/:username/:pswd', (req, res) => {
-    var uname = req.params.username;
+router.get('/users/auth/:email/:pswd', (req, res) => {
+    var email = req.params.email;
     var psd = req.params.pswd;
-    mysqlconnection.query('select id from users where username=? and password=?;', [uname, psd], (error, rows) => {
+    mysqlconnection.query('select id from users where email=? and password=?;', [email, psd], (error, rows) => {
         if (rows.length == 0) {
             res.send('no user found');
         } else {
@@ -105,12 +105,13 @@ router.get('/:users/:id', (req, res) => {
 });
 
 //input new user
-router.post('/:users/input', (req, res) => {
-    const { id, username, lastname, mail, number } = req.body;
+router.post('/:users/input/:id', (req, res) => {
+    const { id } = req.params;
+    const { username, lastname, mail, number, password } = req.body;
     console.log(req.body);
-    mysqlconnection.query('insert into users values (?,?,?,?,?)', [id, username, lastname, mail, number], (error, rows, fields) => {
+    mysqlconnection.query('insert into users values (?,?,?,?,?,?)', [id, username, lastname, mail, number, password], (error, rows, fields) => {
         if (!error) {
-            res.json({ Status: 'user saved' });
+            res.send('user saved');
         } else {
             console.log(error);
         }
