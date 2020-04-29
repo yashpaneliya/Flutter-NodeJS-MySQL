@@ -133,11 +133,12 @@ router.put('/:users/update/:id', (req, res) => {
 
 //assign task to self
 router.put('/:users/:id/assignselftask', (req, res) => {
-    const { id, title, desc, date, status } = req.body;
+    var id = req.params.id;
+    const { title, desc, date, status } = req.body;
     console.log(req.body);
     mysqlconnection.query('insert into selftask values (?,?,?,?,?);', [id, title, desc, date, status], (error, rows, fields) => {
         if (!error) {
-            res.json({ Status: 'selftask added' });
+            res.send('selftask added');
         } else {
             console.log(error);
         }
@@ -146,7 +147,9 @@ router.put('/:users/:id/assignselftask', (req, res) => {
 
 //assigning task to other
 router.put('/:users/:id/assigntask/:tid', (req, res) => {
-    const { id, title, desc, date, tid, status } = req.body;
+    var id = req.params.id;
+    var tid = req.params.tid;
+    const { title, desc, date, status } = req.body;
     console.log(req.body);
     mysqlconnection.query('insert into asstasks values (?,?,?,?,?,?);', [id, title, desc, date, tid, status], (error, rows, fields) => {
         if (!error) {
