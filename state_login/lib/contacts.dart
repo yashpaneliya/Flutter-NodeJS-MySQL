@@ -1,0 +1,68 @@
+import 'dart:convert';
+
+import 'package:contacts_service/contacts_service.dart' as cnt;
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
+
+List<cnt.Contact> finalcontacts;
+List phones;
+refreshContacts() async{
+    PermissionStatus pstatus=await getContactPermission(); 
+    if(pstatus==PermissionStatus.granted)
+    {
+      phones=[];
+      var contacts=(await cnt.ContactsService.getContacts(withThumbnails: false)).toList();
+      finalcontacts=contacts;
+      for(final c in finalcontacts)
+      {
+        for(final p in c.phones)
+          {
+            print(p.value);
+            phones.add(p.value);
+          }
+      }
+      print(phones);
+      var response=await http.get('http://10.0.2.2:8000/users/number');
+      List<dynamic> datanumlist=[];
+      if(response.statusCode==200)
+         datanumlist=jsonDecode(response.body);
+      List finallist=[];
+      for(final c in datanumlist)
+      {
+        if(phones.contains(c["number"]))
+          {
+            finallist.add(c["number"]);
+            print(c["number"]);
+          }
+      }
+      print(finallist);
+    }
+    else{
+      handleInvalidPermissions(pstatus);
+    }
+  }
+
+  void handleInvalidPermissions(PermissionStatus permissionStatus) {
+    if (permissionStatus == PermissionStatus.denied) {
+      throw new PlatformException(
+          code: "PERMISSION_DENIED",
+          message: "Access to location data denied",
+          details: null);
+    } else if (permissionStatus == PermissionStatus.undetermined) {
+      throw new PlatformException(
+          code: "PERMISSION_DISABLED",
+          message: "Location data is not available on device",
+          details: null);
+    }
+  }
+
+  Future<PermissionStatus> getContactPermission()async
+  {
+    bool ps=await Permission.contacts.request().isGranted;
+    if(ps)
+    {
+      return PermissionStatus.granted;
+    }
+  }
