@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:state_login/models/assignTask.dart';
+import 'package:state_login/models/selftask.dart';
 import 'package:state_login/models/users.dart';
 import 'package:state_login/notifiers/auth_notifier.dart';
 import 'dart:math';
@@ -40,7 +43,6 @@ Future signup(User user, AuthNotifier authNotifier) async {
       pref.setString('userid', id.toString());
       authNotifier.setUser(pref.getString('userid'));
     }
-    
     return true;
   }
 }
@@ -74,3 +76,34 @@ getselftask(id)async
     print('error with server');
   }
 }
+
+assignTaskToOther(Assigntask at)async{
+  var map={
+    "title":at.title,
+    "desc":at.desc,
+    "date":at.date,
+    "status":at.status,
+  };
+  var response = await http.put('http://10.0.2.2:8000/users/${at.id}/assigntask/${at.tid}',headers: <String,String>{'Content-Type':'application/json; charset=UTF-8'},body: jsonEncode(map));
+  print(response.body);
+  if(response.statusCode==200)
+  {
+    return response.body;
+  }
+  else{
+    return "error";
+  }
+}
+
+assignSelfTask(Selftask st)async{
+    print(st.toMap());
+    var response=await http.put('http://10.0.2.2:8000/:users/${st.id}/assignselftask',headers: <String,String>{'Content-Type':'application/json; charset=UTF-8'},body: json.encode(st.toMap()));
+    print(response.body);
+    if(response.statusCode==200)
+    {
+      return response.body;   
+    }
+    else{
+      return "error";
+    }
+  }
