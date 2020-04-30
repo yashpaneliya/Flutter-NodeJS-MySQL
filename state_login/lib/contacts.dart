@@ -5,39 +5,40 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
+import 'package:state_login/models/contactdetail.dart';
 
 List<cnt.Contact> finalcontacts;
-List phones;
-refreshContacts() async{
+List<ContactDetail> phones;
+Future<List<ContactDetail>> refreshContacts() async{
     PermissionStatus pstatus=await getContactPermission(); 
     if(pstatus==PermissionStatus.granted)
     {
       phones=[];
       var contacts=(await cnt.ContactsService.getContacts(withThumbnails: false)).toList();
       finalcontacts=contacts;
-      for(final c in finalcontacts)
-      {
-        for(final p in c.phones)
-          {
-            print(p.value);
-            phones.add(p.value);
-          }
-      }
-      print(phones);
       var response=await http.get('http://10.0.2.2:8000/users/number');
       List<dynamic> datanumlist=[];
+
       if(response.statusCode==200)
          datanumlist=jsonDecode(response.body);
-      List finallist=[];
+
       for(final c in datanumlist)
       {
-        if(phones.contains(c["number"]))
+        for(final num in contacts){
+          print(num.phones.elementAt(0).value);
+          print(c["number"]);
+          if(num.phones.elementAt(0).value.toString()==(c["number"]))
           {
-            finallist.add(c["number"]);
-            print(c["number"]);
+            ContactDetail temp=ContactDetail();
+            temp.id=c["id"].toString();
+            temp.number=c["number"];
+            temp.name=c["username"];
+            phones.add(temp);
           }
+        }
       }
-      print(finallist);
+      print(phones.length);
+      return phones;
     }
     else{
       handleInvalidPermissions(pstatus);
