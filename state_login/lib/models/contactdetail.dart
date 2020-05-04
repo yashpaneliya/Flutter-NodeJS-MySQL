@@ -5,6 +5,4 @@ class ContactDetail{
   String number;
 
   ContactDetail();
-
-  
 }
