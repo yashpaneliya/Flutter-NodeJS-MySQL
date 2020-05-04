@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:contacts_service/contacts_service.dart' as cnt;
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:state_login/models/contactdetail.dart';
@@ -18,7 +17,6 @@ Future<List<ContactDetail>> refreshContacts() async{
       finalcontacts=contacts;
       var response=await http.get('http://10.0.2.2:8000/users/number');
       List<dynamic> datanumlist=[];
-
       if(response.statusCode==200)
          datanumlist=jsonDecode(response.body);
 
