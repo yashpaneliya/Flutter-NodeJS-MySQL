@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:state_login/models/assignTask.dart';
 import 'package:state_login/models/selftask.dart';
@@ -107,3 +106,14 @@ assignSelfTask(Selftask st)async{
       return "error";
     }
   }
+
+getAllAssignedTaskToMe(id)async{
+  var response=await http.get('http://10.0.2.2:8000/users/$id/asstasks');
+  if(response.statusCode==200)
+  {
+    return json.decode(response.body);
+  }
+  else{
+    return 'error';
+  }
+}
