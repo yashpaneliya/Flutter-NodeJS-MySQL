@@ -38,7 +38,7 @@ router.get('/:users', (req, res) => {
 //get all assigned task of a user
 router.get('/:users/:id/asstasks', (req, res) => {
     const { id } = req.params;
-    mysqlconnection.query('select * from asstasks where id=?;', [id], (error, rows, fields) => {
+    mysqlconnection.query('select * from asstasks where tid=?;', [id], (error, rows, fields) => {
         if (!error) {
             res.json(rows);
         } else {
@@ -61,7 +61,7 @@ router.get('/:users/:id/selftasks', (req, res) => {
 
 //get all numbers
 router.get("/users/number", (req, res) => {
-    mysqlconnection.query('select number from users;', (error, rows, fields) => {
+    mysqlconnection.query('select id,username,number from users;', (error, rows, fields) => {
         if (!error) {
             res.json(rows);
         } else {
@@ -153,9 +153,114 @@ router.put('/:users/:id/assigntask/:tid', (req, res) => {
     console.log(req.body);
     mysqlconnection.query('insert into asstasks values (?,?,?,?,?,?);', [id, title, desc, date, tid, status], (error, rows, fields) => {
         if (!error) {
-            res.json({ Status: 'task added' });
+            res.send("task added");
         } else {
             console.log(error);
+        }
+    });
+});
+
+//completed selftask
+router.put('/users/comselftask/:id', (req, res) => {
+    const { id } = req.params;
+    const { title, date } = req.body;
+    mysqlconnection.query('update asstasks set status=1 where id=? and title=? and date=?;', [id, title, date], (error, rows) => {
+        if (!error) {
+            console.log('completed task');
+            res.send('done');
+        } else {
+            console.log(error);
+            res.send(error.errno);
+        }
+    });
+});
+
+//completed asstask by worker
+router.put('/users/comaasstask/:tid', (req, res) => {
+    const { tid } = req.params;
+    const { title, id, date } = req.body;
+    mysqlconnection.query('update asstasks set status=1 where tid=? and title=? and id=? and date=?;', [tid, title, id, date], (error, rows) => {
+        if (!error) {
+            console.log('deleted task');
+            res.send('done');
+        } else {
+            console.log(error);
+            res.send(error.errno);
+        }
+    });
+});
+
+//update selftask
+router.put('/users/updateSelf/:id', (req, res) => {
+    const { id } = req.params;
+    const { title, date, utitle, udesc, udate } = req.body;
+    mysqlconnection.query('update selftask set title=?,desc=?,date=? where id=? and title=? and date=?;', [utitle, udesc, udate, id, title, date], (error, rows) => {
+        if (!error) {
+            console.log('updated task');
+            res.send('done');
+        } else {
+            console.log(error);
+            res.send(error.errno);
+        }
+    });
+});
+
+//update asstask by assigner
+router.put('/users/updateAssA/:id', (req, res) => {
+    const { id } = req.params;
+    const { title, date, tid, utitle, udesc, udate } = req.body;
+    mysqlconnection.query('update asstasks set title=?,desc=?,date=? where id=? and title=? and tid=? and date=?;', [utitle, udesc, udate, id, title, tid, date], (error, rows) => {
+        if (!error) {
+            console.log('updated task');
+            res.send('done');
+        } else {
+            console.log(error);
+            res.send(error.errno);
+        }
+    });
+});
+
+//delete a selftask
+router.put('/users/deleteself/:id', (req, res) => {
+    const { id } = req.params;
+    const { title, date } = req.body;
+    mysqlconnection.query('update selftask set status="-1" where uid=? and title=? and date=?;', [id, title, date], (error, rows) => {
+        if (!error) {
+            console.log('deleted task');
+            res.send('done');
+        } else {
+            console.log(error);
+            res.send(error.errno);
+        }
+    });
+});
+
+//delete an assigned task(Deleteing by assigner)
+router.put('/users/deleteAssA/:id', (req, res) => {
+    const { id } = req.params;
+    const { title, tid, date } = req.body;
+    mysqlconnection.query('update asstasks set status=-1 where id=? and title=? and tid=? and date=?;', [id, title, tid, date], (error, rows) => {
+        if (!error) {
+            console.log('deleted task');
+            res.send('done');
+        } else {
+            console.log(error);
+            res.send(error.errno);
+        }
+    });
+});
+
+//delete an assigned task(Deleteing by worker)
+router.put('/users/deleteAssW/:tid', (req, res) => {
+    const { tid } = req.params;
+    const { title, id, date } = req.body;
+    mysqlconnection.query('update asstasks set status=2 where tid=? and title=? and id=? and date=?;', [tid, title, id, date], (error, rows) => {
+        if (!error) {
+            console.log('deleted task');
+            res.send('done');
+        } else {
+            console.log(error);
+            res.send(error.errno);
         }
     });
 });
