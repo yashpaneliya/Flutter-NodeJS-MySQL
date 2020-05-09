@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:state_login/models/assignTask.dart';
+import 'package:state_login/models/assignedBymemodel.dart';
+import 'package:state_login/models/assignedTomemodel.dart';
 import 'package:state_login/models/selftask.dart';
+import 'package:state_login/models/selftasklistmodel.dart';
 import 'package:state_login/models/users.dart';
 import 'package:state_login/notifiers/auth_notifier.dart';
 import 'dart:math';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 var userId;
 
@@ -65,11 +67,12 @@ signout(AuthNotifier authNotifier) async {
 
 getselftask(id)async
 {
+  List<SelfTaskListModel> task;
   var response = await http.get('http://10.0.2.2:8000/users/$id/selftasks');
   if(response.statusCode==200)
   {
-    print(jsonDecode(response.body));
-    return jsonDecode(response.body);
+    task=(json.decode(response.body) as List).map((e) => SelfTaskListModel.fromJson(e)).toList();
+    return task;
   }
   else{
     print('error with server');
@@ -108,12 +111,75 @@ assignSelfTask(Selftask st)async{
   }
 
 getAllAssignedTaskToMe(id)async{
+  List<AssignedToMeModel> task=[];
   var response=await http.get('http://10.0.2.2:8000/users/$id/asstasks');
   if(response.statusCode==200)
   {
-    return json.decode(response.body);
+    task=(json.decode(response.body) as List).map((e) => AssignedToMeModel.fromJson(e)).toList();
+    return task;
   }
   else{
     return 'error';
+  }
+}
+
+getAllAssignedTaskByMe(id)async{
+  List<AssignedByMeModel> task=[];
+  var response=await http.get('http://10.0.2.2:8000/users/$id/asstasksbyme');
+  if(response.statusCode==200)
+  {
+    task=(json.decode(response.body) as List).map((e) => AssignedByMeModel.fromJson(e)).toList();
+    return task;
+  }
+  else{
+    return 'error';
+  }
+}
+
+completeSelfTask(id,title,date)async{
+  var response=await http.put('http://10.0.2.2:8000/users/comselftask/$id',body: json.encode({"title":title,"date":date}),headers:<String,String>{'Content-Type':'application/json; charset=UTF-8'} );
+  if(response.statusCode==200 && response.body=="done")
+  {
+    print('complete');
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
+completeAssignedToMeTask(tid,title,id,date)async{
+  var response=await http.put('http://10.0.2.2:8000/users/comAssWtask/$tid',body: json.encode({"title":title,"id":id,"date":date}),headers:<String,String>{'Content-Type':'application/json; charset=UTF-8'} );
+  if(response.statusCode==200 && response.body=="done")
+  {
+    print('complete');
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
+completeAssignedByMeTask(id,title,tid,date)async{
+  var response=await http.put('http://10.0.2.2:8000/users/comAssAtask/$id',body: json.encode({"title":title,"tid":tid,"date":date}),headers:<String,String>{'Content-Type':'application/json; charset=UTF-8'} );
+  if(response.statusCode==200 && response.body=="done")
+  {
+    print('complete');
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
+deleteSelfTask(id,title,date)async{
+  var response=await http.put('http://10.0.2.2:8000/users/deleteself/$id',body: json.encode({"title":title,"date":date}),headers:<String,String>{'Content-Type':'application/json; charset=UTF-8'} );
+  if(response.statusCode==200 && response.body=="done")
+  {
+    print('complete');
+    return true;
+  }
+  else{
+    return false;
   }
 }
