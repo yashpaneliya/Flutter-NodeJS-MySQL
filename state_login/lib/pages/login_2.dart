@@ -56,7 +56,7 @@ class _LoginState extends State<Login> {
         TextFormField(
           decoration: InputDecoration(
             labelText: "Display Name",
-            labelStyle: TextStyle(color: Colors.white54),
+            labelStyle: TextStyle(color: Colors.purple),
           ),
           keyboardType: TextInputType.text,
           style: TextStyle(fontSize: 19, color: Colors.white),
@@ -81,7 +81,7 @@ class _LoginState extends State<Login> {
       decoration: InputDecoration(
         labelText: "Phone No",
         
-        labelStyle: TextStyle(color: Colors.white54),
+        labelStyle: TextStyle(color: Colors.purple),
       ),
       keyboardType: TextInputType.number,
       style: TextStyle(fontSize: 19, color: Colors.white),
@@ -138,7 +138,8 @@ class _LoginState extends State<Login> {
     return TextFormField(
       decoration: InputDecoration(
         labelText: "Email",
-        labelStyle: TextStyle(color: Colors.white54),
+        hintText: 'email',
+        labelStyle: TextStyle(color: Colors.purple),
       ),
       keyboardType: TextInputType.emailAddress,
       style: TextStyle(fontSize: 19, color: Colors.white),
@@ -165,11 +166,13 @@ class _LoginState extends State<Login> {
 
   Widget _buildPasswordField() {
     return TextFormField(
+      
       decoration: InputDecoration(
+        
         labelText: "Password",
-        labelStyle: TextStyle(color: Colors.white54),
+        labelStyle: TextStyle(color: Colors.purple),
       ),
-      style: TextStyle(fontSize: 19, color: Colors.white),
+      style: TextStyle(fontSize: 19, color: Colors.purple),
       cursorColor: Colors.white,
       obscureText: true,
       controller: _passwordController,
@@ -194,7 +197,7 @@ class _LoginState extends State<Login> {
     return TextFormField(
       decoration: InputDecoration(
         labelText: "Confirm Password",
-        labelStyle: TextStyle(color: Colors.white54),
+        labelStyle: TextStyle(color: Colors.purple),
       ),
       style: TextStyle(fontSize: 19, color: Colors.white),
       cursorColor: Colors.white,
@@ -218,7 +221,7 @@ class _LoginState extends State<Login> {
         constraints: BoxConstraints.expand(
           height: MediaQuery.of(context).size.height,
         ),
-        decoration: BoxDecoration(color: Color(0xff34056D)),
+        decoration: BoxDecoration(color: Colors.white),
         child: Form(
           autovalidate: true,
           key: _formKey,
@@ -303,7 +306,7 @@ class _LoginState extends State<Login> {
                       padding: EdgeInsets.all(10.0),
                       child: Text(
                         'Not Have Account? Switch to ${_authMode == AuthMode.Login ? 'Signup' : 'Login'}',
-                        style: TextStyle(fontSize: 13, color: Colors.white),
+                        style: TextStyle(fontSize: 13, color: Colors.purple),
                       ),
                       onPressed: () {
                         setState(() {
