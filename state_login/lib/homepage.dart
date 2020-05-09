@@ -10,6 +10,9 @@ import 'package:state_login/models/assignTask.dart';
 import 'package:state_login/models/contactdetail.dart';
 import 'package:state_login/models/selftask.dart';
 import 'package:state_login/notifiers/auth_notifier.dart';
+import 'package:state_login/pages/assignedToMetasklist.dart';
+import 'package:state_login/pages/assignedtasklist.dart';
+import 'package:state_login/pages/selftasklist.dart';
 
 class Task extends StatefulWidget {
   final id;
@@ -20,17 +23,20 @@ class Task extends StatefulWidget {
 }
 
 class _TaskState extends State<Task> with SingleTickerProviderStateMixin {
-  TabController tc;
-  bool show=false;
+
   var sckey=GlobalKey<ScaffoldState>();
   var selectedDate=DateTime.now();
   List<ContactDetail> contactdetaillist;  //contacts list
 
+  PageController controller=PageController(viewportFraction: 0.9);
+  int currentPage;
+  List<Widget> pages;
   
   @override
   void initState() {
     super.initState();
-    tc=TabController(length: 2,vsync:this);
+    currentPage=0;
+    pages=[SelfTaskList(id: widget.id,),AssignedToMeTask(id:widget.id),AssignedTask(id:widget.id)];
   }
 
   Future<Null> _selectDate(BuildContext context) async {
@@ -48,149 +54,26 @@ class _TaskState extends State<Task> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     AuthNotifier auth=Provider.of<AuthNotifier>(context);
-    return DefaultTabController(
-      length: 2,
-          child: Scaffold(
-            key: sckey,
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.white,
-          elevation: 0,
-          flexibleSpace: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              
-              TabBar(
-                labelColor: Colors.purple,
-                indicatorColor: Colors.purple,
-                tabs: [
-                  Tab(text: 'Self Task'),
-                  Tab(text: 'Assigned Task')
-              ],),
-            ],
-          ),
+    return Scaffold(
+        key: sckey,
+        backgroundColor: Colors.white,
+        body: PageView.builder(
+          itemCount: 3,
+          controller: controller,
+          onPageChanged: (value) {
+            setState(() {
+              currentPage=value;
+              print(currentPage.toInt());
+            });
+          },
+          pageSnapping: true,
+          physics: BouncingScrollPhysics(),
+          itemBuilder: (context,position)=>SafeArea(
+            child: Card(
+              elevation:25.0,
+              child: pages[position])
+            )
         ),
-        body:TabBarView(
-                children: [
-                FutureBuilder(
-                  future: getselftask(widget.id),
-                  builder: (context, snapshot) {
-                    return (snapshot.connectionState==ConnectionState.waiting)
-                    ? Center(child: CircularProgressIndicator())
-                    : (snapshot.data.length==0)?Text('No data available')
-                      :CustomScrollView(
-                          slivers:<Widget> [
-                            // SliverAppBar(
-                            //   title: RichText(
-                            //           text:TextSpan(
-                            //             children: [
-                            //             TextSpan(text: 'You have',style: TextStyle(color: Colors.grey)),
-                            //             TextSpan(text: ' ${snapshot.data.length} tasks',style: TextStyle(color: Colors.green)),
-                            //             TextSpan(text: ' remaining',style: TextStyle(color: Colors.grey)),
-                            //           ]) 
-                            //         ),
-                            // ),
-                            SliverPersistentHeader(
-                              delegate: HeaderDelegate(snapshot.data.length)),
-                            SliverList(
-                                delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-                                  return (index<snapshot.data.length)?
-                                  Container(
-                                    margin: EdgeInsets.only(left:30.0,right: 30.0,top: 10.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20.0),
-                                      boxShadow: [BoxShadow(
-                                        offset: Offset(0.0,3.0),
-                                        color: Colors.primaries[Random().nextInt(Colors.primaries.length)].withOpacity(0.3),
-                                        blurRadius: 0.5
-                                      )]
-                                    ),
-                                    width: MediaQuery.of(context).size.width-50.0,
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                                      color: Colors.white,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.only(top:20.0,left: 20.0,bottom: 10.0),
-                                            child: Text(snapshot.data.elementAt(index)["title"],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20.0),),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.only(left:20.0,bottom: 10.0),
-                                            child: Text('Desc : ${snapshot.data.elementAt(index)["desc"]}',style: TextStyle(fontSize:18.0,color: Colors.grey,),),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.only(left:20.0,bottom: 10.0),
-                                            child: Text('Deadline Date : ${snapshot.data.elementAt(index)["date"]}',style: TextStyle(color: Colors.grey,),),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                            :null;
-                                },
-                                )
-                            )
-                          ],
-                      );
-                  },
-                ),
-                FutureBuilder(
-                  future: getAllAssignedTaskToMe(widget.id),
-                  builder: (context, snapshot) {
-                    return (snapshot.connectionState==ConnectionState.waiting)
-                    ?Center(child: CircularProgressIndicator())
-                    : (snapshot.data.length==0 || snapshot.data=='error')?Text('No data available')
-                      :CustomScrollView(
-                          slivers:<Widget> [
-                            SliverPersistentHeader(
-                              delegate: HeaderDelegate(snapshot.data.length)),
-                            SliverList(
-                                delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-                                  return (index<snapshot.data.length)?
-                                  Container(
-                                    margin: EdgeInsets.only(left:30.0,right: 30.0,top: 10.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20.0),
-                                      boxShadow: [BoxShadow(
-                                        offset: Offset(0.0,3.0),
-                                        color: Colors.primaries[Random().nextInt(Colors.primaries.length)].withOpacity(0.3),
-                                        blurRadius: 0.5
-                                      )]
-                                    ),
-                                    width: MediaQuery.of(context).size.width-50.0,
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                                      color: Colors.white,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.only(top:20.0,left: 20.0,bottom: 10.0),
-                                            child: Text(snapshot.data.elementAt(index)["title"],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20.0),),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.only(left:20.0,bottom: 10.0),
-                                            child: Text('Desc : ${snapshot.data.elementAt(index)["desc"]}',style: TextStyle(fontSize:18.0,color: Colors.grey,),),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.only(left:20.0,bottom: 10.0),
-                                            child: Text('Deadline Date : ${snapshot.data.elementAt(index)["date"]}',style: TextStyle(color: Colors.grey,),),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                            :null;
-                                },
-                                )
-                            )
-                          ],
-                      );
-                  },
-                ),
-              ],),
         floatingActionButton: RaisedButton(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
           color: Color.fromRGBO(15, 228, 0, 1),
@@ -212,8 +95,9 @@ class _TaskState extends State<Task> with SingleTickerProviderStateMixin {
           ),
         ),
         bottomNavigationBar: BottomAppBar(
+          elevation: 5.0,
           color: Colors.white,
-          notchMargin: 15.0,
+          notchMargin: 35.0,
           shape: CircularNotchedRectangle(),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -227,8 +111,7 @@ class _TaskState extends State<Task> with SingleTickerProviderStateMixin {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 
   void openselftasksheet(context,id){
@@ -554,47 +437,4 @@ class _TaskState extends State<Task> with SingleTickerProviderStateMixin {
       });
   }
 
-}
-
-class HeaderDelegate extends SliverPersistentHeaderDelegate{
-final length;
-
-  HeaderDelegate(this.length);
-@override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return LayoutBuilder(
-        builder: (context, constraints) {
-          return Container(
-            padding: EdgeInsets.only(left:30.0,right:20.0),
-            // height: constraints.maxHeight,
-            child: ListView(
-              children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                Text('Heyy There!!',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 25.0,color: Colors.black),),
-                IconButton(icon: Icon(Icons.settings_ethernet), onPressed: (){})
-              ],),
-              RichText(
-                text:TextSpan(
-                  children: [
-                  TextSpan(text: 'You have',style: TextStyle(color: Colors.grey)),
-                  TextSpan(text: ' $length tasks',style: TextStyle(color: Colors.green)),
-                  TextSpan(text: ' remaining',style: TextStyle(color: Colors.grey)),
-                ]) 
-              )
-            ],),
-          );
-        }
-    );
-  }
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate _) => true;
-
-  @override
-  double get maxExtent => 80.0;
-
-  @override
-  double get minExtent => 0.0;
 }
