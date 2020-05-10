@@ -33,7 +33,7 @@ class _AssignedToMeTaskState extends State<AssignedToMeTask> {
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                                       color: Colors.white,
                                       child: ListTile(
-                                        title: Text(snapshot.data.elementAt(index).title,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17.0),),
+                                        title: Text(snapshot.data.elementAt(index).title.toString().toUpperCase(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17.0),),
                                         subtitle: Padding(
                                           padding: const EdgeInsets.only(top:8.0),
                                           child: Text(snapshot.data.elementAt(index).date,style: TextStyle(color:Colors.grey,fontSize: 13.0),),
@@ -44,7 +44,7 @@ class _AssignedToMeTaskState extends State<AssignedToMeTask> {
                                               return ["Complete","Delete"].map((e) {
                                                 return PopupMenuItem(
                                                   child: Text(e),
-                                                  value: [snapshot.data.elementAt(index).tid,snapshot.data.elementAt(index).title,widget.id,snapshot.data.elementAt(index).date],
+                                                  value: [snapshot.data.elementAt(index).tid,snapshot.data.elementAt(index).title,snapshot.data.elementAt(index).date],
                                                 );
                                               } ).toList();
                                             }
@@ -84,7 +84,9 @@ class _AssignedToMeTaskState extends State<AssignedToMeTask> {
                                         ),
                                         trailing: IconButton(
                                           icon: Icon(Icons.delete),
-                                          onPressed: (){},
+                                          onPressed: (){
+                                            deleteTask(snapshot.data.elementAt(index).tid,snapshot.data.elementAt(index).title,snapshot.data.elementAt(index).date);
+                                          },
                                         ),
                                       ),
                                     ),
@@ -99,8 +101,9 @@ class _AssignedToMeTaskState extends State<AssignedToMeTask> {
                   },
                 );
   }
+
   void performMeAction(List task)async{
-    if(await completeAssignedToMeTask(task.elementAt(0), task.elementAt(1),task.elementAt(2), task.elementAt(3))){
+    if(await completeAssignedToMeTask(task.elementAt(0), task.elementAt(1), task.elementAt(2))){
       setState(() {
         print('Task Completed');
       });
@@ -112,8 +115,17 @@ class _AssignedToMeTaskState extends State<AssignedToMeTask> {
     }
   }
 
-  void deleteTask(id,title,date)async{
-    
+  void deleteTask(tid,title,date)async{
+    if(await deleteAssignedToMe(tid, title, date)){
+      setState(() {
+        print('deleted');
+      });
+    }
+    else{
+      setState(() {
+        print('not deleted');
+      });
+    }
   }
 }
 

@@ -239,7 +239,7 @@ class _LoginState extends State<Login> {
                                     EdgeInsets.fromLTRB(0.0, 20.0, 110.0, 0.0),
                                 child: Text('Signup',
                                     style: TextStyle(
-                                        fontSize: 69.0,
+                                        fontSize: 60.0,
                                         fontWeight: FontWeight.bold)),
                               ),
                               Container(
@@ -262,7 +262,7 @@ class _LoginState extends State<Login> {
                                     EdgeInsets.fromLTRB(0.0, 20.0, 110.0, 0.0),
                                 child: Text('Login',
                                     style: TextStyle(
-                                        fontSize: 80.0,
+                                        fontSize: 60.0,
                                         fontWeight: FontWeight.bold)),
                               ),
                               Container(

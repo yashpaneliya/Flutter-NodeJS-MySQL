@@ -148,8 +148,8 @@ completeSelfTask(id,title,date)async{
   }
 }
 
-completeAssignedToMeTask(tid,title,id,date)async{
-  var response=await http.put('http://10.0.2.2:8000/users/comAssWtask/$tid',body: json.encode({"title":title,"id":id,"date":date}),headers:<String,String>{'Content-Type':'application/json; charset=UTF-8'} );
+completeAssignedToMeTask(tid,title,date)async{
+  var response=await http.put('http://10.0.2.2:8000/users/comAssWtask/$tid',body: json.encode({"title":title,"date":date}),headers:<String,String>{'Content-Type':'application/json; charset=UTF-8'} );
   if(response.statusCode==200 && response.body=="done")
   {
     print('complete');
@@ -174,6 +174,30 @@ completeAssignedByMeTask(id,title,tid,date)async{
 
 deleteSelfTask(id,title,date)async{
   var response=await http.put('http://10.0.2.2:8000/users/deleteself/$id',body: json.encode({"title":title,"date":date}),headers:<String,String>{'Content-Type':'application/json; charset=UTF-8'} );
+  if(response.statusCode==200 && response.body=="done")
+  {
+    print('complete');
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
+deleteAssignedByMe(id,title,tid,date)async{
+  var response=await http.put('http://10.0.2.2:8000/users/deleteAssA/$id',body: json.encode({"title":title,"tid":tid,"date":date}),headers:<String,String>{'Content-Type':'application/json; charset=UTF-8'} );
+  if(response.statusCode==200 && response.body=="done")
+  {
+    print('complete');
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
+deleteAssignedToMe(tid,title,date)async{
+  var response=await http.put('http://10.0.2.2:8000/users/deleteAssW/$tid',body: json.encode({"title":title,"date":date}),headers:<String,String>{'Content-Type':'application/json; charset=UTF-8'} );
   if(response.statusCode==200 && response.body=="done")
   {
     print('complete');

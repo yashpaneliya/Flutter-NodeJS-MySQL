@@ -84,7 +84,9 @@ class _AssignedTaskState extends State<AssignedTask> {
                                         ),
                                         trailing: IconButton(
                                           icon: Icon(Icons.delete),
-                                          onPressed: (){},
+                                          onPressed: (){
+                                            deleteTask(widget.id, snapshot.data.elementAt(index).title, snapshot.data.elementAt(index).tid, snapshot.data.elementAt(index).date);
+                                          },
                                         ),
                                       ),
                                     ),
@@ -109,6 +111,19 @@ class _AssignedTaskState extends State<AssignedTask> {
     else{
       setState(() {
         print('not completed');
+      });
+    }
+  }
+
+  void deleteTask(id,title,tid,date)async{
+    if(await deleteAssignedByMe(id, title,tid, date)){
+      setState(() {
+        print('deleted');
+      });
+    }
+    else{
+      setState(() {
+        print('not deleted');
       });
     }
   }
