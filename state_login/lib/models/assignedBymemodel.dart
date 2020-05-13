@@ -1,4 +1,4 @@
-class AssignedByMeModel{
+class AssignedByMeModel {
   String id;
   String title;
   String date;
@@ -10,10 +10,10 @@ class AssignedByMeModel{
 
   AssignedByMeModel.fromJson(data) {
     id = data['id'];
-    title=data['title'];
-    desc = data['desc'];
+    title = data['title'];
+    desc = data['descp'];
     date = data['date'];
-    tid=data['tid'];
+    tid = data['tid'];
     status = data['status'];
   }
 }

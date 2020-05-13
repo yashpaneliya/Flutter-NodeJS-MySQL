@@ -1,28 +1,26 @@
-
-class Selftask{
+class Selftask {
   String title;
   String desc;
   String date;
   String id;
-  int status;
+  String status;
 
   Selftask();
 
   Selftask.fromMap(Map<dynamic, dynamic> data) {
     id = data['uid'];
-    title=data['title'];
-    desc = data['desc'];
+    title = data['title'];
+    desc = data['descp'];
     date = data['date'];
     status = data['status'];
   }
 
-  Map<String, String> toMap(){
+  Map<String, dynamic> toMap() {
     return {
-      "uid":"$id",
-      "title" : "$title",
-      "desc":"$desc",
-      "date" : "$date",
-      "status" : "$status",
+      "title": "$title",
+      "descp": "$desc",
+      "date": "$date",
+      "status": "$status",
     };
   }
 }

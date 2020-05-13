@@ -10,20 +10,19 @@ class User {
 
   User.fromMap(Map<dynamic, dynamic> data) {
     name = data['username'];
-    last=data['lastname'];
+    last = data['lastname'];
     mail = data['mail'];
     password = data['password'];
     number = data['number'];
   }
 
-  Map<String, String> toMap(){
+  Map<String, String> toMap() {
     return {
-      "username" : "$name",
-      "lastname":"$name",
-      "mail" : "$mail",
-      "number" : "$number",
-      "password" : "$password",
+      "username": "$name",
+      "lastname": "$name",
+      "mail": "$mail",
+      "number": "$number",
+      "password": "$password",
     };
   }
-
 }

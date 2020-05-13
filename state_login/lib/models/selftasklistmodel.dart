@@ -1,4 +1,4 @@
-class SelfTaskListModel{
+class SelfTaskListModel {
   String id;
   String title;
   String date;
@@ -9,8 +9,8 @@ class SelfTaskListModel{
 
   SelfTaskListModel.fromJson(data) {
     id = data['id'];
-    title=data['title'];
-    desc = data['desc'];
+    title = data['title'];
+    desc = data['descp'];
     date = data['date'];
     status = data['status'];
   }
