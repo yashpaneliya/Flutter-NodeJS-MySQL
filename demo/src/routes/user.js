@@ -121,6 +121,7 @@ router.post('/:users/input/:id', (req, res) => {
     const { id } = req.params;
     const { username, lastname, mail, number, password } = req.body;
     console.log(req.body);
+    console.log(id);
     mysqlconnection.query('insert into users values (?,?,?,?,?,?)', [id, username, lastname, mail, number, password], (error, rows, fields) => {
         if (!error) {
             res.send('user saved');
@@ -146,9 +147,9 @@ router.put('/:users/update/:id', (req, res) => {
 //assign task to self
 router.put('/:users/:id/assignselftask', (req, res) => {
     var id = req.params.id;
-    const { title, desc, date, status } = req.body;
+    const { title, descp, date, status } = req.body;
     console.log(req.body);
-    mysqlconnection.query('insert into selftask values (?,?,?,?,?);', [id, title, desc, date, status], (error, rows, fields) => {
+    mysqlconnection.query('insert into selftask values (?,?,?,?,?);', [id, title, descp, date, status], (error, rows, fields) => {
         if (!error) {
             res.send('selftask added');
         } else {
@@ -224,7 +225,7 @@ router.put('/users/comAssAtask/:id', (req, res) => {
 router.put('/users/updateSelf/:id', (req, res) => {
     const { id } = req.params;
     const { title, date, utitle, udesc, udate } = req.body;
-    mysqlconnection.query('update selftask set title=?,desc=?,date=? where id=? and title=? and date=?;', [utitle, udesc, udate, id, title, date], (error, rows) => {
+    mysqlconnection.query('update selftask set title=?,descp=?,date=? where uid=? and title=? and date=?;', [utitle, udesc, udate, id, title, date], (error, rows) => {
         if (!error) {
             console.log('updated task');
             res.send('done');
@@ -238,8 +239,8 @@ router.put('/users/updateSelf/:id', (req, res) => {
 //update asstask by assigner
 router.put('/users/updateAssA/:id', (req, res) => {
     const { id } = req.params;
-    const { title, date, tid, utitle, udesc, udate } = req.body;
-    mysqlconnection.query('update asstasks set title=?,desc=?,date=? where id=? and title=? and tid=? and date=?;', [utitle, udesc, udate, id, title, tid, date], (error, rows) => {
+    const { title, date, tid, utitle, udesc, utid, udate } = req.body;
+    mysqlconnection.query('update asstasks set title=?,descp=?,tid=?,date=? where id=? and title=? and tid=? and date=?;', [utitle, udesc, utid, udate, id, title, tid, date], (error, rows) => {
         if (!error) {
             console.log('updated task');
             res.send('done');
