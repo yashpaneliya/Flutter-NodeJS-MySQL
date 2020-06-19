@@ -118,7 +118,7 @@ router.get('/:users/:id', (req, res) => {
 
 //input new user
 router.post('/:users/input/:id', (req, res) => {
-    const { id } = req.params;
+    const { id } = req.body;
     const { username, lastname, mail, number, password } = req.body;
     console.log(req.body);
     console.log(id);
@@ -309,3 +309,9 @@ router.delete('/:users/:id', (req, res) => {
 });
 
 module.exports = router;
+
+
+for (var key in req.body) {
+    var value = req.body[key];
+    console.log(`${value}`);
+}
