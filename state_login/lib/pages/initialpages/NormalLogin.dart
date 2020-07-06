@@ -11,26 +11,26 @@ class NLogin extends StatefulWidget {
 }
 
 class _NLoginState extends State<NLogin> {
-  
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = new TextEditingController();
   String _errorMessage;
   User _user = User();
   AuthNotifier authNotifier;
 
-  void _submitForm(){
+  void _submitForm() {
     if (!_formKey.currentState.validate()) {
       return;
     }
 
     _formKey.currentState.save();
-
+    print('before auth noti');
     authNotifier = Provider.of<AuthNotifier>(context, listen: false);
-
+    print('after auth noti');
     login(_user, authNotifier);
+    print('after login');
     Navigator.popUntil(context, (route) => route.isFirst);
   }
-  
+
   Widget _buildEmailField() {
     return TextFormField(
       decoration: InputDecoration(
@@ -87,9 +87,8 @@ class _NLoginState extends State<NLogin> {
     );
   }
 
-
   Widget build(BuildContext context) {
-   return Scaffold(
+    return Scaffold(
       body: Container(
         constraints: BoxConstraints.expand(
           height: MediaQuery.of(context).size.height,
@@ -104,33 +103,28 @@ class _NLoginState extends State<NLogin> {
               child: Column(
                 children: <Widget>[
                   Container(
-                          child: Stack(
-                            children: <Widget>[
-                              Container(
-                                padding:
-                                    EdgeInsets.fromLTRB(0.0, 20.0, 110.0, 0.0),
-                                child: Text('Login',
-                                    style: TextStyle(
-                                        fontSize: 80.0,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                              Container(
-                                padding: EdgeInsets.fromLTRB(
-                                    200.0, 20.0, 100.0, 0.0),
-                                child: Text('.',
-                                    style: TextStyle(
-                                        fontSize: 80.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.deepPurple)),
-                              ),
-                            ],
-                          ),
+                    child: Stack(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.fromLTRB(0.0, 20.0, 110.0, 0.0),
+                          child: Text('Login',
+                              style: TextStyle(
+                                  fontSize: 80.0, fontWeight: FontWeight.bold)),
                         ),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(200.0, 20.0, 100.0, 0.0),
+                          child: Text('.',
+                              style: TextStyle(
+                                  fontSize: 80.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.deepPurple)),
+                        ),
+                      ],
+                    ),
+                  ),
                   SizedBox(height: 29),
-                 
                   _buildEmailField(),
                   _buildPasswordField(),
-                  
                   SizedBox(height: 30),
                   Container(
                     height: 40.0,
@@ -165,8 +159,8 @@ class _NLoginState extends State<NLogin> {
                       ),
                       onPressed: () {
                         setState(() {
-                         Navigator.of(context).push(
-                            MaterialPageRoute(builder: (contex) => Signup()));
+                          Navigator.of(context).push(
+                              MaterialPageRoute(builder: (contex) => Signup()));
                         });
                       },
                     ),
@@ -179,6 +173,4 @@ class _NLoginState extends State<NLogin> {
       ),
     );
   }
-
-
 }

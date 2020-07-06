@@ -66,7 +66,7 @@ login(User user, AuthNotifier authNotifier) async {
     print('true condition');
     userId = response.body.toString(); // storing the id to variable->userid
     print(response.body.toString());
-    //st=Status.Authenticated;
+    // st=Status.Authenticated;
     if (userId != null) {
       await pref.setString('userid', userId);
       print(pref.getString('userid'));

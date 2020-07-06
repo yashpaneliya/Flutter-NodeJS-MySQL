@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:state_login/apiprovider/user_api.dart';
 import 'package:state_login/homepage.dart';
 import 'package:state_login/pages/initialPages/StartingPage.dart';
-import 'package:state_login/pages/login_2.dart';
-import 'models/users.dart';
 import 'notifiers/auth_notifier.dart';
 
 void main() {
@@ -25,6 +22,20 @@ void main() {
   ));
 }
 
+
+class Shops extends StatefulWidget {
+  @override
+  _ShopsState createState() => _ShopsState();
+}
+
+class _ShopsState extends State<Shops> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Icon(Icons.shop),
+    );
+  }
+}
 class TaskApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -39,7 +50,7 @@ class TaskApp extends StatelessWidget {
           )),
       home: Consumer<AuthNotifier>(
         builder: (context, notifier, child) {
-          return notifier.user != null || notifier.guser!=null
+          return (notifier.user != null || notifier.guser!=null)
               ? Task(
                   id: notifier.user,
                 )
